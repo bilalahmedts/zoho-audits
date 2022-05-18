@@ -11,7 +11,7 @@
         <li class="nav-header">ZOHO AUDITS</li>
         
         <li class="nav-item">
-            <a href="{{ route('audits.create') }}" class="nav-link {{ request()->is('audits.create') ? 'active' : '' }}">
+            <a href="{{ route('audits.create') }}" class="nav-link {{ request()->is('audits/create') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-tasks"></i>
                 <p>
                     Create Zoho Audit
@@ -19,7 +19,7 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="{{ route('audits.index') }}" class="nav-link {{ request()->is('audits.index') ? 'active' : '' }}">
+            <a href="{{ route('audits.index') }}" class="nav-link {{ request()->is('audits') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-file"></i>
                 <p>
                     View Zoho Audits
@@ -28,7 +28,7 @@
         </li>
         @if (in_array(Auth::user()->roles[0]->name, ['Super Admin','Director','Manager', 'Team Lead']))
         <li class="nav-item">
-            <a href="{{ route('audits.audit-report') }}" class="nav-link {{ request()->is('audits.audit-report') ? 'active' : '' }}">
+            <a href="{{ route('audits.audit-report') }}" class="nav-link {{ request()->is('audits/audit-report') ? 'active' : '' }}">
                 <i class="far fa-file nav-icon"></i>
                 <p>View Report</p>
             </a>
