@@ -109,7 +109,8 @@ class AuditController extends Controller
                 $query = $query->whereDate('created_at', $start_date->toDateString());
             }
             $audits = $query->paginate(10);
-        } else {
+        }
+         else {
             $audits = array();
         }
         return view('audits.audit-report', compact('audits'));
