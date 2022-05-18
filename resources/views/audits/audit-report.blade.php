@@ -20,7 +20,8 @@
         @php
             $start_date = '';
             $end_date = '';
-            
+            $evaluationStatus = '';
+
             if (isset($_GET['search'])) {
                 if (!empty($_GET['start_date'])) {
                     $start_date = $_GET['start_date'];
@@ -29,6 +30,11 @@
                     $end_date = $_GET['end_date'];
                 }
             }
+            if (isset($_GET['search'])) {
+                    if (!empty($_GET['evaluationStatus'])) {
+                        $evaluationStatus = $_GET['evaluationStatus'];
+                    }
+                }
         @endphp
 
         <form action="{{ route('audits.audit-report') }}" method="get" autocomplete="off">
@@ -37,17 +43,25 @@
                 @if (!isset($_GET['search'])) style="display: none;" @endif>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <label>Start Date</label>
                             <input type="text" class="form-control datetimepicker-input datepicker1"
                                 data-toggle="datetimepicker" data-target=".datepicker1" name="start_date"
                                 placeholder="Enter Start Date" value="{{ $start_date }}">
                         </div>
-                        <div class="col-sm-6">
+                        <div class="col-sm-4">
                             <label>End Date</label>
                             <input type="text" class="form-control datetimepicker-input datepicker2"
                                 data-toggle="datetimepicker" data-target=".datepicker2" name="end_date"
                                 placeholder="Enter End Date" value="{{ $end_date }}">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="">Select Evaluation Status</label>
+                            <select name="evaluationStatus" class="form-control select2">
+                                <option value="">Select</option>
+                                <option value="Passed" @if ($evaluationStatus == 'Passed') selected @endif>Passed</option>
+                                <option value="Failed" @if ($evaluationStatus == 'Failed') selected @endif>Failed</option>
+                            </select>
                         </div>
                     </div>
                 </div>

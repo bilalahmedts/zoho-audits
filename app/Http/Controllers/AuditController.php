@@ -113,6 +113,12 @@ class AuditController extends Controller
          else {
             $audits = array();
         }
+        if ($request->has('evaluationStatus')) {
+            if (!empty($request->evaluationStatus)) {
+                $query = $query->where('evaluationStatus', $request->evaluationStatus);
+            }
+            $audits = $query->paginate(10);
+        }
         return view('audits.audit-report', compact('audits'));
     }
 

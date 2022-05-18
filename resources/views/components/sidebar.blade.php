@@ -26,6 +26,7 @@
                 </p>
             </a>
         </li>
+        <li class="nav-header">Reports</li>
         <li class="nav-item">
             <a href="{{ route('audits.audit-report') }}"
                 class="nav-link {{ request()->is('audits/audit-report') ? 'active' : '' }}">
@@ -34,6 +35,7 @@
             </a>
         </li>
         @if (in_array(Auth::user()->roles[0]->name, ['Super Admin']))
+        <li class="nav-header">SETTINGS</li>
             <li class="nav-item {{ request()->is('users', 'roles') ? 'menu-open' : '' }}">
                 <a href="#" class="nav-link {{ request()->is('users', 'roles') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-users"></i>
