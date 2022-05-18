@@ -21,7 +21,7 @@
                         <td>{{ $audit->evaluationStatus ?? '-' }}</td>
                         <td>{{ $audit->comments ?? '-' }}</td>
                         <td>{{ $audit->evaluator->name ?? '-' }}</td>
-                        <td>{{ $audit->created_at->format('d-m-Y') ?? '-'}}</td>
+                        <td>{{ $audit->created_at ?? '-'}}</td>
                 </tr>
             @endforeach
         @else
