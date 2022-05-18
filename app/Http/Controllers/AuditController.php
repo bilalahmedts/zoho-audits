@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\Audit;
-use Illuminate\Support\Facades\Session;
-use App\Http\Requests\AuditRequest;
-use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\AuditReportExport;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AuditRequest;
+use App\Models\Audit;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AuditController extends Controller
 {
@@ -23,9 +23,9 @@ class AuditController extends Controller
     {
         $audits = Audit::when($request, function ($query, $request) {
             $query->search($request);
-        })->with('user','campaign','evaluator')->sortable()->orderBy('id', 'asc')->paginate(10);
+        })->with('user', 'campaign', 'evaluator')->sortable()->orderBy('id', 'asc')->paginate(10);
         $users = User::all();
-        return view('audits.index')->with(compact('audits','users'));
+        return view('audits.index')->with(compact('audits', 'users'));
     }
 
     /**
@@ -67,7 +67,7 @@ class AuditController extends Controller
     public function edit(Audit $audit)
     {
         $users = User::where('id', '!=', 1)->get();
-        return view('audits.edit', compact('audit','users'));
+        return view('audits.edit', compact('audit', 'users'));
     }
 
     /**
@@ -109,8 +109,7 @@ class AuditController extends Controller
                 $query = $query->whereDate('created_at', $start_date->toDateString());
             }
             $audits = $query->paginate(10);
-        }
-         else {
+        } else {
             $audits = array();
         }
         if ($request->has('evaluationStatus')) {
