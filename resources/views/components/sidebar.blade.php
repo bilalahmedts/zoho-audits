@@ -26,7 +26,7 @@
                 </p>
             </a>
         </li>
-        @if (in_array(Auth::user()->roles[0]->name, ['Super Admin', 'Manager', 'Team Lead']))
+        @if (in_array(Auth::user()->roles[0]->name, ['Super Admin','Director','Manager', 'Team Lead']))
         <li class="nav-item">
             <a href="{{ route('audits.audit-report') }}" class="nav-link {{ request()->is('audits.audit-report') ? 'active' : '' }}">
                 <i class="far fa-file nav-icon"></i>
@@ -35,7 +35,7 @@
         </li>
         @endif
         @if (in_array(Auth::user()->roles[0]->name, ['Super Admin']))
-        <li class="nav-item {{ request()->is('users','teams','roles') ? 'menu-open' : '' }}">
+        <li class="nav-item {{ request()->is('users','roles') ? 'menu-open' : '' }}">
             <a href="#" class="nav-link {{ request()->is('users','roles') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-users"></i>
                 <p>
