@@ -23,11 +23,11 @@ Route::middleware('auth')->get('/', function () {
 });
 
 // secured routes
-Route::middleware('checkLogin')->group(function () {
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::middleware('checkLogin')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('logout', [LoginController::class, 'logout'])->name('logout');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('audits')->group(function () {
             Route::get('/', [AuditController::class, 'index'])->name('audits.index');
@@ -41,33 +41,33 @@ Route::middleware('checkLogin')->group(function () {
             Route::get('/export-audit-report', [AuditController::class, 'export'])->name('audits.audit-report-table');
         });
 
-    Route::middleware('admin')->group(function () {
-        Route::prefix('users')->group(function () {
-            Route::get('/', [UserController::class, 'index'])->name('users.index');
-            Route::get('/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
-            Route::put('/update/{user}', [UserController::class, 'update'])->name('users.update');
-        });
+        Route::middleware('admin')->group(function () {
+            Route::prefix('users')->group(function () {
+                Route::get('/', [UserController::class, 'index'])->name('users.index');
+                Route::get('/edit/{user}', [UserController::class, 'edit'])->name('users.edit');
+                Route::put('/update/{user}', [UserController::class, 'update'])->name('users.update');
+            });
 
-        Route::prefix('roles')->group(function () {
-            Route::get('/', [RoleController::class, 'index'])->name('roles.index');
-            Route::get('/create', [RoleController::class, 'create'])->name('roles.create');
-            Route::post('/store', [RoleController::class, 'store'])->name('roles.store');
-            Route::get('/edit/{role}', [RoleController::class, 'edit'])->name('roles.edit');
-            Route::put('/update/{role}', [RoleController::class, 'update'])->name('roles.update');
-            Route::get('/delete/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
-        });
-        
-        Route::prefix('campaigns')->group(function () {
-            Route::get('/', [CampaignController::class, 'index'])->name('campaigns.index');
-            Route::get('/create', [CampaignController::class, 'create'])->name('campaigns.create');
-            Route::post('/store', [CampaignController::class, 'store'])->name('campaigns.store');
-            Route::get('/edit/{campaign}', [CampaignController::class, 'edit'])->name('campaigns.edit');
-            Route::put('/update/{campaign}', [CampaignController::class, 'update'])->name('campaigns.update');
-            Route::get('/delete/{campaign}', [CampaignController::class, 'destroy'])->name('campaigns.delete');
+            Route::prefix('roles')->group(function () {
+                Route::get('/', [RoleController::class, 'index'])->name('roles.index');
+                Route::get('/create', [RoleController::class, 'create'])->name('roles.create');
+                Route::post('/store', [RoleController::class, 'store'])->name('roles.store');
+                Route::get('/edit/{role}', [RoleController::class, 'edit'])->name('roles.edit');
+                Route::put('/update/{role}', [RoleController::class, 'update'])->name('roles.update');
+                Route::get('/delete/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+            });
+
+            Route::prefix('campaigns')->group(function () {
+                Route::get('/', [CampaignController::class, 'index'])->name('campaigns.index');
+                Route::get('/create', [CampaignController::class, 'create'])->name('campaigns.create');
+                Route::post('/store', [CampaignController::class, 'store'])->name('campaigns.store');
+                Route::get('/edit/{campaign}', [CampaignController::class, 'edit'])->name('campaigns.edit');
+                Route::put('/update/{campaign}', [CampaignController::class, 'update'])->name('campaigns.update');
+                Route::get('/delete/{campaign}', [CampaignController::class, 'destroy'])->name('campaigns.delete');
+            });
         });
     });
 });
-
 // unsecure routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
