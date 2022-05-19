@@ -79,7 +79,7 @@ class DataSyncService
 
         $this->makeSuperAdmin();
 
-        $valid_designations = [15, 2055, 2059, 2068, 2101, 2, 4, 14, 25, 31, 34, 36, 38, 40, 2060, 2081, 2082, 3104, 47, 2054, 2064, 2066, 12, 53, 1053, 2056, 2057, 2058, 2061, 2080, 2084, 3153, 2074];
+        $valid_designations = [15, 2055, 2059, 2068, 2101, 2, 4, 14, 25, 31, 34, 36, 38, 40, 2060, 2081, 2082, 3104, 47, 2054, 2064, 2066, 12, 53, 1053, 2056, 2057, 2058, 2061, 2080, 2084, 3153, 2074, 3121, 3110, 3126];
 
         $response = Http::get('https://api.touchstoneleads.com/MyService.svc/GetEmployeeList?Accesskey=4321Touch1234&IsActive=1')->body();
 
@@ -111,24 +111,23 @@ class DataSyncService
 
             }
         }
+
     }
 
     public function updateUser($hrms_employee, $user){
         $user->name = $hrms_employee->Name;
 
         $user->email = $hrms_employee->EmailAddress;
+        // reportingTo
+        $supervisor = User::where('hrms_id', $hrms_employee->ReportingTo)->first();
+        if($supervisor){
+            $user->reporting_to = $supervisor->id;
+        }
 
         if (env('APP_ENV') == "production") {
             $user->password = Hash::make($hrms_employee->Password);
         } else {
             $user->password = Hash::make("test123");
-        }
-
-        // reportingTo
-        $supervisor = User::where('hrms_id', $hrms_employee->ReportingTo)->first();
-
-        if($supervisor){
-            $user->reporting_to = $supervisor->id;
         }
 
 
@@ -142,10 +141,14 @@ class DataSyncService
         $check_user = false;
 
         $user->hrms_id = $hrms_employee->ID;
-        $user->ts_hrms_id = $hrms_employee->HRMSID;
         $user->hrms_designation_id = $hrms_employee->DesignationID;
         $user->name = $hrms_employee->Name;
         $user->email = $hrms_employee->EmailAddress;
+        // reportingTo
+        $supervisor = User::where('hrms_id', $hrms_employee->ReportingTo)->first();
+        if($supervisor){
+            $user->reporting_to = $supervisor->id;
+        }
 
         // designation
         $designation = Designation::where('hrms_id', $user->hrms_designation_id)->first();
@@ -166,13 +169,6 @@ class DataSyncService
             $user->password = Hash::make("test123");
         }
 
-        // reportingTo
-        $supervisor = User::where('hrms_id', $hrms_employee->ReportingTo)->first();
-
-        if($supervisor){
-            $user->reporting_to = $supervisor->id;
-        }
-
 
         $user->status = ($hrms_employee->Active) ? 'active' : 'disabled';
 
@@ -182,26 +178,20 @@ class DataSyncService
 
             // assign role
 
-            $directors = [15, 2055, 2059, 2068, 2101];
-            $managers = [2, 4, 14, 25, 31, 36, 38, 40, 2060, 2081, 2082, 3104, 34];
-            $team_leads = [47, 2054, 2064, 2066];
+            $directors = [15, 2055, 2059, 2068, 2101, 3126];
+            $managers = [2, 4, 14, 25, 31, 36, 38, 40, 2060, 2081, 2082, 3104, 34, 3110];
+            $team_leads = [47, 2054, 2064, 2066, 3121];
             $associates = [12, 53, 1053, 2056, 2057, 2058, 2061, 2080, 2084, 2074];
 
-            if($user->campaign_id == 159){
-                if($user->hrms_designation_id == 2055){
-                    $user->assignRole('Director Training');
-                }
-                else{
-                    $user->assignRole('Team Training');
-                }
-            }
-            elseif (in_array($user->hrms_designation_id, $directors)) {
+            if (in_array($user->hrms_designation_id, $directors)) {
                 $user->assignRole('Director');
             } elseif (in_array($user->hrms_designation_id, $managers)) {
                 $user->assignRole('Manager');
             } elseif (in_array($user->hrms_designation_id, $team_leads)) {
                 $user->assignRole('Team Lead');
             } elseif (in_array($user->hrms_designation_id, $associates)) {
+                $user->assignRole('Associate');
+            } else {
                 $user->assignRole('Associate');
             }
         }
@@ -230,7 +220,7 @@ class DataSyncService
     public function inactiveUsers()
     {
 
-        $valid_designations = [15, 2055, 2059, 2068, 2101, 2, 4, 14, 25, 31, 34, 36, 38, 40, 2060, 2081, 2082, 3104, 47, 2054, 2064, 2066, 12, 53, 1053, 2056, 2057, 2058, 2061, 2080, 2084, 3153, 2074];
+        $valid_designations = [15, 2055, 2059, 2068, 2101, 2, 4, 14, 25, 31, 34, 36, 38, 40, 2060, 2081, 2082, 3104, 47, 2054, 2064, 2066, 12, 53, 1053, 2056, 2057, 2058, 2061, 2080, 2084, 3153, 2074, 3121, 3110, 3126];
 
         $response = Http::get('https://api.touchstoneleads.com/MyService.svc/GetEmployeeList?Accesskey=4321Touch1234&IsActive=0')->body();
 
@@ -246,7 +236,7 @@ class DataSyncService
                     $user = User::where('email', $hrms_employee->EmailAddress)->first();
 
                     if($user){
-                        $user->status = 'disabled';
+                        $user->status = ($hrms_employee->Active) ? 'active' : 'disabled';
                         $user->save();
                     }
                     // end
@@ -266,7 +256,7 @@ class DataSyncService
             $user->name = "Adminstrator";
             $user->email = "admin@touchstone.com.pk";
             $user->password = Hash::make("test123");
-            $user->status = 'active';
+            $user->status = 1;
             $user->save();
 
             $user->assignRole("Super Admin");
