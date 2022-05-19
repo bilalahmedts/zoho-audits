@@ -23,13 +23,12 @@ Route::middleware('auth')->get('/', function () {
 });
 
 // secured routes
-Route::middleware('auth')->group(function () {
+Route::middleware('checkLogin')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::middleware('checkLogin')->group(function () {
         Route::prefix('audits')->group(function () {
             Route::get('/', [AuditController::class, 'index'])->name('audits.index');
             Route::get('/create', [AuditController::class, 'create'])->name('audits.create');
@@ -41,7 +40,6 @@ Route::middleware('auth')->group(function () {
             Route::post('/audit-report', [AuditController::class, 'getDataByDate'])->name('audits.audit-report');
             Route::get('/export-audit-report', [AuditController::class, 'export'])->name('audits.audit-report-table');
         });
-    });
 
     Route::middleware('admin')->group(function () {
         Route::prefix('users')->group(function () {
