@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class Admin
+class CheckLogin
 {
     /**
      * Handle an incoming request.
@@ -17,7 +17,7 @@ class Admin
      */
     public function handle(Request $request, Closure $next)
     {
-        if(in_array(Auth::user()->roles[0]->name, ["Super Admin", "Director"])){
+        if(in_array(Auth::user()->roles[0]->name, ["Super Admin", "Director", "Manager", "Team Lead"])){
             return $next($request);
         }
         abort(403);

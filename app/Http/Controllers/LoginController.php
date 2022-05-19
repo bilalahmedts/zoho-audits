@@ -17,7 +17,7 @@ public function index()
     {
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'status' => 'active' ])) {
-            return redirect()->intended('home');
+            return redirect()->intended('dashboard');
         } else {
             return redirect()->back()->with('error', 'Invalid Email or Password');
         }
